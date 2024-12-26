@@ -1,0 +1,235 @@
+<MyCanvas>:
+    canvas.before:
+        Color:
+            rgba: 0.179, 0.217, 0.455, 1
+        Rectangle:
+            source: 'back.png'
+            pos: self.pos
+            size: self.size
+
+<MECanvas>:
+    canvas.before:
+        Color:
+            rgba: 0.379, 0.217, 0.455, 1
+        Rectangle:
+            source: 'back.png'
+            pos: self.pos
+            size: self.size
+
+<Manager>:
+    Screen1:
+    Screen2:
+    ListScreen:
+    AddPlayList:
+    Screen3:
+    MEscreen:
+
+<Screen1>:
+    name: 'scr1'
+    MainRoot:
+
+<Screen2>:
+    name: 'scr2'
+    Root2:
+
+<Screen3>:
+    name: 'scr3'
+    Root3:
+
+<MEscreen>:
+    name: 'MEscr'
+
+    Label:
+        text: root.myself()
+
+<MainRoot>:
+    MyCanvas:
+        pos_hint: {'x': 0.05, 'y': 0.05}
+        size_hint: 0.9, 0.9
+
+        Label:
+            text: root.myself()
+
+        Image:
+            source: 'logo.jpg'
+            pos_hint: {'x': 0.25, 'top': 1}
+            size_hint: 0.5, 0.5
+
+    Credit:
+        pos_hint: {'x': 0.55, 'y': -0.02}
+        size_hint: 0.5, 0.1
+
+<Root2>:
+    MECanvas:
+        pos_hint: {'x': 0.05, 'y': 0.05}
+        size_hint: 0.9, 0.9
+
+        Button:
+            id: back_btn
+            text: 'Back'
+            pos_hint: {'x': 0.01, 'top': 0.98}
+            size_hint: 0.10, 0.07
+            on_press: root.back_btn()
+
+        Label:
+            text: root.myself()
+
+<ListScreen>:
+    name: 'listscr'
+    MECanvas:
+        pos_hint: {'x': 0.05, 'y': 0.05}
+        size_hint: 0.9, 0.9
+
+        Button:
+            id: back_btn
+            text: 'Back'
+            pos_hint: {'x': 0.01, 'top': 0.98}
+            size_hint: 0.10, 0.07
+            on_press: root.back_btn()
+
+        Label:
+            text: root.myself()
+
+<AddPlayList>:
+    name: 'addplayscr'
+    MECanvas:
+        pos_hint: {'x': 0.05, 'y': 0.05}
+        size_hint: 0.9, 0.9
+
+        Button:
+            id: back_btn
+            text: 'Back'
+            pos_hint: {'x': 0.01, 'top': 0.98}
+            size_hint: 0.10, 0.07
+            on_press: root.back_btn()
+
+        Label:
+            text: root.myself()
+
+<Root3>:
+    MECanvas:
+        pos_hint: {'x': 0.05, 'y': 0.05}
+        size_hint: 0.9, 0.9
+
+        Button:
+            id: back_btn
+            text: 'Back'
+            pos_hint: {'x': 0.01, 'top': 0.98}
+            size_hint: 0.10, 0.07
+            on_press: root.back_btn()
+
+        Label:
+            text: root.myself()
+
+<MEroot>:
+    MECanvas:
+        pos_hint: {'x': 0.05, 'y': 0.05}
+        size_hint: 0.9, 0.9
+
+        Image:
+            id: img
+            source: root.text_img()
+            pos_hint: {'x': 0.25, 'top': 1}
+            size_hint: 0.5, 0.5
+
+        Image:
+            id: like_img
+            source: root.text_like_img()
+            pos_hint: {'x': 0.155, 'top': 0.255}
+            size_hint: 0.05, 0.05
+
+        Button:
+            background_color: 0.2, 1, 0.9, 1
+            id: play_btn
+            text: root.text_play_btn()
+            pos_hint: {'x': 0.425, 'top': 0.3}
+            size_hint: 0.15, 0.15
+            on_press: root.play_btn(self)
+
+        Button:
+            background_color: 0.7, 0.4, 0.6, 1
+            id: next_btn
+            text: 'Next'
+            pos_hint: {'x': 0.625, 'top': 0.275}
+            size_hint: 0.15, 0.1
+            on_press: root.next_btn()
+
+        Button:
+            background_color: 0.7, 0.4, 0.6, 1
+            id: prev_btn
+            text: 'Prev'
+            pos_hint: {'x': 0.225, 'top': 0.275}
+            size_hint: 0.15, 0.1
+            on_press: root.prev_btn()
+
+        Button:
+            background_color: 0.5, 0.6, 0.6, 1
+            id: repeat_btn
+            text: root.text_repeat_btn()
+            pos_hint: {'x': 0.8, 'top': 0.255}
+            size_hint: 0.1, 0.05
+            on_press: root.repeat_btn(self)
+
+        Button:
+            id: back_btn
+            text: 'Back'
+            pos_hint: {'x': 0.01, 'top': 0.98}
+            size_hint: 0.15, 0.07
+            on_press: root.back_btn()
+
+        Label:
+            id: song_label
+            text: root.text_song_label()
+            font_size: 30
+            color: 0.9, 0.4, 0.4, 1
+            pos_hint: {'x': 0.1, 'top': 0.6}
+            size_hint: 0.8, 0.2
+
+        Label:
+            id: playline_label_1
+            text: root.ctime()
+            color: 0.4, 1, 0.9, 1
+            pos_hint: {'x': 0.08, 'y': 0.27}
+            size_hint: 0.1, 0.1
+
+        Label:
+            id: playline_label_2
+            text: root.ltime()
+            color: 0.4, 1, 0.9, 1
+            pos_hint: {'x': 0.82, 'y': 0.27}
+            size_hint: 0.1, 0.1
+
+        Label:
+            id: volume_label
+            text: root.volume_label()
+            color: 0.4, 1, 0.9, 1
+            pos_hint: {'x': 0.035, 'y': 0.8}
+            size_hint: 0.06, 0.1
+
+        Label:
+            text: root.myself()
+
+<P>:
+    Label:
+        id: pop_lbl
+        size_hint: 0.8, 0.3
+        pos_hint: {'x': 0.1, 'top': 0.8}
+        text: 'hello'
+
+<Pbtn>:
+    Label:
+        id: pop_lbl
+        size_hint: 0.8, 0.3
+        pos_hint: {'x': 0.1, 'top': 0.8}
+        text: 'hello'
+    Button:
+        id: pop_btn
+        size_hint: 0.8, 0.3
+        pos_hint: {'x': 0.1, 'top': 0.3}
+        text: ''
+
+<Credit>:
+    Label:
+        text: 'Created By RUTVIK H. RANA :)'
+        pos: root.pos
+        size: root.size
