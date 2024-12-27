@@ -1,0 +1,147 @@
+Certainly, let's break down the code and explain each part:
+
+main.py:
+
+Import necessary modules:
+
+from kivy.app import App: Imports the base class for all Kivy applications.
+from kivy.uix.screenmanager import ScreenManager, Screen: Imports classes for managing multiple screens within an application.
+from kivy.lang import Builder: Allows us to define the user interface using a declarative language (KV language).
+Define Screen classes:
+
+class HelloScreen(Screen): pass: Creates a class HelloScreen that inherits from the Screen class. This class will represent the first screen in our application.
+class NextScreen(Screen): pass: Creates a class NextScreen that also inherits from Screen. This class will represent the second screen.
+Define the main application class:
+
+class WindowManagerApp(App):: Creates a class WindowManagerApp that inherits from the App class. This is the main class of our application.
+build() method:
+
+sm = ScreenManager(): Creates an instance of ScreenManager to manage the screens.
+sm.add_widget(HelloScreen(name="hello")): Adds an instance of HelloScreen to the screen manager with the name "hello".
+sm.add_widget(NextScreen(name="next")): Adds an instance of NextScreen to the screen manager with the name "next".
+return sm: Returns the screen manager instance to the Kivy application.
+Run the application:
+
+if __name__ == "__main__":: This ensures that the code below only runs when the script is executed directly (not imported as a module).
+WindowManagerApp().run(): Creates an instance of WindowManagerApp and starts the application.
+App.kv:
+
+Define the HelloScreen layout:
+
+name: "hello": Assigns the name "hello" to this screen definition, which corresponds to the name used in main.py when adding the screen to the screen manager.
+BoxLayout:: Creates a vertical layout container.
+orientation: "vertical": Sets the orientation of the layout to vertical.
+Label:: Creates a label widget.
+text: "Hello World": Sets the text of the label.
+halign: "center": Aligns the text horizontally within the label.
+Button:: Creates a button widget.
+text: "Start": Sets the text of the button.
+halign: "center": Aligns the text horizontally within the button.
+on_release: app.root.current = "next": This line defines the action that happens when the button is pressed. app.root refers to the root widget of the application, which is the screen manager. app.root.current = "next" changes the current screen to the screen named "next."
+Define the NextScreen layout:
+
+name: "next": Assigns the name "next" to this screen definition.
+Label:: Creates a label widget.
+text: "Hi": Sets the text of the label.
+halign: "center": Aligns the text horizontally within the label.
+In summary:
+
+The code creates two screens: a welcome screen with a "Start" button and a second screen with a simple "Hi" label.
+When the "Start" button is pressed, the application transitions from the welcome screen to the second screen.
+The KV language is used to define the user interface in a concise and declarative way.
+
+code main.py
+```from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.lang import Builder
+
+class HelloScreen(Screen):
+    pass
+
+class NextScreen(Screen):
+    pass
+
+class ThirdScreen(Screen):
+    pass
+class Playlist(Screen):
+    pass
+
+#this is a main class class MusicApp(App):
+    def build(self):
+        # Create the screen manager
+        sm = ScreenManager()
+        sm.add_widget(HelloScreen(name="hello"))
+        sm.add_widget(NextScreen(name="next"))
+        sm.add_widget(ThirdScreen(name="third"))
+        sm.add_widget(Playlist(name="four"))
+
+        return sm
+
+if __name__ == "__main__":
+    #name of the main class MusicApp().run()``` 
+
+#name of the main class ->MusicApp.kv
+```<HelloScreen>:
+    name: "hello"
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "Hello World"
+            halign: "center"
+        Button:
+            text: "Start"
+            halign: "center"
+            on_release:
+                app.root.current = "next"
+
+<NextScreen>:
+    name: "next"
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "Hello second screen"
+            halign: "center"
+        Button:
+            text: "third"
+            halign: "center"
+            on_release:
+                app.root.current = "third"
+   
+<ThirdScreen>:
+    name:"third"
+    
+    BoxLayout:
+        Label:
+            text: "Hi"
+            halign: "center"
+        Button:
+            text:"<-"
+            on_release:
+                app.root.current="next"
+            
+        Button:
+            text:"start page"
+            on_release:
+                app.root.current="hello"
+        Button:
+            text:"next"
+            on_release:
+                app.root.current="four"
+
+<Playlist>:
+    name:"four"
+    BoxLayout:
+        Button:
+            text:"<-"
+            on_release:
+                app.root.current="third"
+        Button:
+            text:"second"
+            on_release:
+                app.root.current="next"
+        Button:
+            text:"first"
+            on_release:
+                app.root.current="hello"
+
+        ```
