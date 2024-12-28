@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import HORIZONTAL, Listbox, filedialog
-from pygame import mixer
+from pygame import mixer, USEREVENT
 import os
 import json
 from mutagen.mp3 import MP3
+import pygame
 
 config_file = "config.json"
 path = ""
@@ -12,16 +13,39 @@ total_songs = 0
 user_seeking = False
 actual_start_time = 0
 song_path = ""
+SONG_END = USEREVENT
+mixer.music.set_endevent(SONG_END)
 
 mixer.init()
+pygame.init()
+
+def check_song_end():
+    global SONG_END
+    for event in pygame.event.get():
+        if event.type == SONG_END:
+            play_next()
+
+    root.after(100, check_song_end)
 
 
 def update_song(song_path):
     song = MP3(song_path)
     artist = song.tags.get("TPE1", "Unknown Artist")
+    print(artist)
     title = song.tags.get("TIT2", "Unknown Title")
-    song_name = artist + title
+    song_name = f"{artist} - {title}"
     name.config(text=song_name)
+    total_length = song.info.length
+    min, sec = get_time(total_length)
+    song_length.config(text=f"{min:02}:{sec:02}")
+    play_time.config(text="00:00")
+
+
+def get_time(total_length):
+    total_length = int(total_length)
+    min = total_length // 60 
+    sec = total_length % 60
+    return min, sec
 
 
 def play_song(index):
@@ -36,6 +60,8 @@ def play_song(index):
     actual_start_time = 0
     update_song(song_path)
     update_progress()
+    mixer.music.set_endevent(SONG_END)
+    check_song_end()
 
 
 def play_selected(event):
@@ -108,6 +134,8 @@ def update_progress():
         if mixer.music.get_busy():
             current_time = actual_start_time + (mixer.music.get_pos() / 1000)
             progress_slider.set(current_time)
+            min, sec = get_time(current_time)
+            play_time.config(text=f"{min:02}:{sec:02}")
             #print("hello")
 
     root.after(1000, update_progress)
@@ -115,16 +143,19 @@ def update_progress():
 
 def seek(event):
     global user_seeking, actual_start_time
+    mixer.music.set_endevent(0)
     user_seeking = False
     actual_start_time  = progress_slider.get()
     mixer.music.stop()
     mixer.music.play(start=actual_start_time)
     mixer.music.set_pos(actual_start_time)
+    mixer.music.set_endevent(SONG_END)
     
 
 def start_seeking(event):
     global user_seeking
     user_seeking = True
+    mixer.music.pause()
 
 
 root = tk.Tk()
