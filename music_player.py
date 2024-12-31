@@ -6,6 +6,7 @@ import json
 from mutagen.mp3 import MP3
 import pygame
 
+
 config_file = "config.json"
 path = ""
 current_index = 0
@@ -18,6 +19,7 @@ mixer.music.set_endevent(SONG_END)
 
 mixer.init()
 pygame.init()
+
 
 def check_song_end():
     global SONG_END
@@ -39,6 +41,7 @@ def update_song(song_path):
     min, sec = get_time(total_length)
     song_length.config(text=f"{min:02}:{sec:02}")
     play_time.config(text="00:00")
+    
 
 
 def get_time(total_length):
@@ -48,7 +51,7 @@ def get_time(total_length):
     return min, sec
 
 
-def play_song(index):
+def load_song(index):
     global actual_start_time, song_path
     song_name = lb.get(index)
     song_path = os.path.join(path, song_name)
@@ -56,8 +59,11 @@ def play_song(index):
     progress_slider.config(from_=0, to=song.info.length)
     mixer.music.unload()
     mixer.music.load(song_path)
+
+def play_song(index):
+    global song_path
+    load_song(index)
     mixer.music.play()
-    actual_start_time = 0
     update_song(song_path)
     update_progress()
     mixer.music.set_endevent(SONG_END)
@@ -65,27 +71,30 @@ def play_song(index):
 
 
 def play_selected(event):
-    global current_index
+    global current_index, actual_start_time
     current_index = lb.curselection()[0]
+    actual_start_time = 0
     play_song(current_index)
     play_pause_btn.config(text="", command=pause_music)
 
 
 def play_next():
-    global current_index
+    global current_index, actual_start_time
     index = (current_index + 1) % total_songs
     current_index = index
+    actual_start_time = 0
     play_song(index)
 
+
 def play_previous():
-    if (mixer.music.get_pos() / 1000) < 10:
-        global current_index
+    if (int(mixer.music.get_pos() / 1000)) < 10:
+        global current_index, actual_start_time
         index = (current_index - 1) % total_songs
         current_index = index
+        actual_start_time = 0
         play_song(index)
     else:
         mixer.music.set_pos(0)
-
 
 
 def load_selected(event):
@@ -99,6 +108,7 @@ def load_music_folder():
     folder_path = filedialog.askdirectory()
     with open(config_file, 'w') as file:
         json.dump({"folder_path": folder_path}, file)
+    load_music_list(folder_path)
 
 
 def load_music_list(folder_path):
@@ -117,9 +127,11 @@ def pause_music():
 
 
 def resume_music():
+    global song_path
     mixer.music.unpause()
     update_button()
-
+    update_progress()
+    check_song_end()
 
 def update_button():
     if mixer.music.get_busy():  
@@ -132,7 +144,8 @@ def update_progress():
     global user_seeking
     if not user_seeking:
         if mixer.music.get_busy():
-            current_time = actual_start_time + (mixer.music.get_pos() / 1000)
+            current_time = int(actual_start_time + (mixer.music.get_pos() / 1000))
+            print(current_time)
             progress_slider.set(current_time)
             min, sec = get_time(current_time)
             play_time.config(text=f"{min:02}:{sec:02}")
@@ -158,13 +171,58 @@ def start_seeking(event):
     mixer.music.pause()
 
 
+def on_closing():
+    global config_file, current_time
+    time = int(actual_start_time + (mixer.music.get_pos() / 1000))
+    data = {
+        "folder_path": path,
+        "current_index": current_index,
+        "current_time": time
+    }
+
+    print(data)
+    with open(config_file, "w") as file:
+        json.dump(data, file)
+    root.quit()
+
+
+def initialize():
+    global path, current_index, actual_start_time, song_path
+    if os.path.exists(config_file):
+        with open(config_file, 'r') as file:
+            data = json.load(file)
+            path = data.get("folder_path", "")
+            
+            if path:  
+                load_music_list(path)
+
+            if "current_index" in data and "current_time" in data:
+                current_index = data["current_index"] 
+                actual_start_time = data["current_time"]
+                print(current_index, actual_start_time)
+                min, sec = get_time(actual_start_time)
+                progress_slider.set(actual_start_time)
+                load_song(current_index)
+                update_song(song_path)
+                play_time.config(text=f"{min:02}:{sec:02}")
+                print(min, sec, actual_start_time)
+                mixer.music.play()
+                mixer.music.set_pos(actual_start_time)
+                mixer.music.pause()
+    else:
+        load = tk.Button(root, text="Load Music Folder", command=load_music_folder)
+        load.place(relx=0.5, rely=0.5, anchor="center")
+        
+
+
 root = tk.Tk()
+
 root.title("Music Player")
 root.rowconfigure(0, weight=2)
 root.rowconfigure(1, weight=0)
 root.columnconfigure(0, weight=1)
 root.geometry("600x500")
-
+root.protocol("WM_DELETE_WINDOW", on_closing)
 
 list_frame = tk.Frame(root)
 list_frame.grid(row=0, column=0, sticky="nsew")
@@ -214,7 +272,7 @@ lb.bind("<Double-1>", play_selected)
 progress_slider.bind("<ButtonRelease-1>", seek)
 progress_slider.bind("<ButtonPress-1>", start_seeking)
 
-
+initialize()
 root.mainloop()
 
 
