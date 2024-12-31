@@ -257,16 +257,6 @@ play_time.grid(row=1, column=0)
 song_length = tk.Label(progress_frame,text="00:00")
 song_length.grid(row=1, column=2, padx=10)
 
-if os.path.exists(config_file):
-    with open(config_file, 'r') as file:
-        data = json.load(file)
-        path = data.get("folder_path","")
-        load_music_list(path)
-else:
-    load = tk.Button(root, text="Load Music Folder", command=load_music_folder)
-    load.place(relx=0.5, rely=0.5, anchor="center")
-
-
 lb.bind("<Double-1>", play_selected)
 #lb.bind("<Button-1>", load_selected)
 progress_slider.bind("<ButtonRelease-1>", seek)
